@@ -136,8 +136,16 @@ namespace SportAcademy.Infrastructure.Seeders
                 new() { Code = "AS", Name = "Asian" },
                 new() { Code = "OT", Name = "Other" },
             };
-            await context.NationalityCategories.AddRangeAsync(nationalityCategories);
-            await context.SaveChangesAsync();
+            if (!context.NationalityCategories.Any())
+            {
+                await context.NationalityCategories.AddRangeAsync(nationalityCategories);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                // If they already exist, fetch them from the database for use in GenerateTrainees
+                nationalityCategories = await context.NationalityCategories.ToListAsync();
+            }
 
             // 8.6 Families (one per trainee)
             logger.LogInformation("Seeding Families...");

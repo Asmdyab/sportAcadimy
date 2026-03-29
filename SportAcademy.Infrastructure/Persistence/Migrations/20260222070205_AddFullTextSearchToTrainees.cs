@@ -10,56 +10,14 @@ namespace SportAcademy.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"
-                IF NOT EXISTS (SELECT * FROM sys.fulltext_catalogs WHERE name = 'TraineeCatalog')
-                BEGIN
-                    CREATE FULLTEXT CATALOG TraineeCatalog;
-                END
-            ", suppressTransaction: true);
-
-            migrationBuilder.Sql(@"
-                IF NOT EXISTS (
-                    SELECT 1 
-                    FROM sys.fulltext_indexes fi
-                    JOIN sys.objects o ON fi.object_id = o.object_id
-                    WHERE o.name = 'Trainees'
-                )
-                BEGIN
-                    CREATE FULLTEXT INDEX ON Trainees
-                    (
-                        FirstName LANGUAGE 1033,
-                        LastName LANGUAGE 1033,
-                        GuardianName LANGUAGE 1033,
-                        Email LANGUAGE 1033
-                    )
-                    KEY INDEX PK_Trainees
-                    ON TraineeCatalog
-                    WITH CHANGE_TRACKING AUTO;
-                END
-            ", suppressTransaction: true);
+            // Full-Text Search is optional. Removed to support SQL Server instances without FTS enabled.
+            // Search endpoints automatically fallback to LIKE-based queries.
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"
-                IF EXISTS (
-                    SELECT 1 
-                    FROM sys.fulltext_indexes fi
-                    JOIN sys.objects o ON fi.object_id = o.object_id
-                    WHERE o.name = 'Trainees'
-                )
-                BEGIN
-                    DROP FULLTEXT INDEX ON Trainees;
-                END
-            ", suppressTransaction: true);
-
-            migrationBuilder.Sql(@"
-                IF EXISTS (SELECT * FROM sys.fulltext_catalogs WHERE name = 'TraineeCatalog')
-                BEGIN
-                    DROP FULLTEXT CATALOG TraineeCatalog;
-                END
-            ", suppressTransaction: true);
+            // No-op: FTS was optional and not created.
         }
     }
 }
