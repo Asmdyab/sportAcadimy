@@ -8,12 +8,6 @@ using SportAcademy.Domain.Entities;
 using SportAcademy.Domain.Enums;
 using SportAcademy.Infrastructure.Persistence.DBContext;
 using SportAcademy.Infrastructure.Persistence.Extensions.QueryExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SportAcademy.Infrastructure.Persistence.Repositories
 {
@@ -47,6 +41,35 @@ namespace SportAcademy.Infrastructure.Persistence.Repositories
                 .Include(a => a.SessionOccurrence)
                 .ProjectTo<AttendanceDto>(_mapper.ConfigurationProvider)
                 .ToPagedDataAsync(page, cancellationToken);
+
+        public async Task<Attendance?> GetBySessionAndEnrollmentAsync(int sessionOccurrenceId, int enrollmentId, CancellationToken ct = default)
+            => await _context.Attendances
+                .FirstOrDefaultAsync(a => a.SessionOccurrenceId == sessionOccurrenceId && a.EnrollmentId == enrollmentId, ct);
+
+        public async Task<List<AttendanceRecordDto>> GetBySessionAsync(int sessionOccurrenceId, CancellationToken ct = default)
+            => await _context.Enrollments
+                .Where(e => !e.IsDeleted && e.IsActive)
+                .Where(e => e.TraineeGroup.GroupSchedules
+                    .Any(gs => gs.SessionOccurrences
+                        .Any(so => so.Id == sessionOccurrenceId)))
+                .Select(e => new AttendanceRecordDto
+                {
+                    Id = e.Attendances
+                        .Where(a => a.SessionOccurrenceId == sessionOccurrenceId)
+                        .Select(a => a.Id)
+                        .FirstOrDefault(),
+                    TraineeId = e.TraineeId,
+                    TraineeName = e.Trainee.FirstName + " " + e.Trainee.LastName,
+                    CheckInTime = e.Attendances
+                        .Where(a => a.SessionOccurrenceId == sessionOccurrenceId)
+                        .Select(a => a.CheckInTime.ToString())
+                        .FirstOrDefault(),
+                    Status = e.Attendances
+                        .Where(a => a.SessionOccurrenceId == sessionOccurrenceId)
+                        .Select(a => a.AttendanceStatus.ToString())
+                        .FirstOrDefault() ?? "Absent"
+                })
+                .ToListAsync(ct);
 
         public async Task<(int TotalSessions, int AttendedSessions)> GetAttendanceSummaryAsync(
            int traineeId,

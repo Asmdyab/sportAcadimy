@@ -2,11 +2,6 @@
 using SportAcademy.Application.DTOs.AttendanceDtos;
 using SportAcademy.Domain.Entities;
 using SportAcademy.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SportAcademy.Application.Interfaces
 {
@@ -21,5 +16,7 @@ namespace SportAcademy.Application.Interfaces
             DateOnly? toDate,
             CancellationToken cancellationToken
         );
+        Task<List<AttendanceRecordDto>> GetBySessionAsync(int sessionOccurrenceId, CancellationToken ct = default);
+        Task<Attendance?> GetBySessionAndEnrollmentAsync(int sessionOccurrenceId, int enrollmentId, CancellationToken ct = default);
     }
 }

@@ -6,6 +6,7 @@ using SportAcademy.Application.Commands.SubscriptionDetailsCommands.DeleteSubscr
 using SportAcademy.Application.Commands.SubscriptionDetailsCommands.UpdateSubscriptionDetails;
 using SportAcademy.Application.Queries.SubscriptionDetailsQueries.GetAll;
 using SportAcademy.Application.Queries.SubscriptionDetailsQueries.GetById;
+using SportAcademy.Application.Queries.SubscriptionDetailsQueries.GetSubDetailsDropdown;
 
 namespace SportAcademy.Web.Controllers
 {
@@ -57,6 +58,13 @@ namespace SportAcademy.Web.Controllers
                 return BadRequest(result?.Result.Message);
 
             return NoContent();
+        }
+
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDropdown(CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetSubDetailsDropdownQuery(), ct);
+            return Ok(result);
         }
     }
 

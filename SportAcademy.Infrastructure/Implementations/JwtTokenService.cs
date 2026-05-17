@@ -40,7 +40,7 @@ namespace SportAcademy.Infrastructure.Implementations
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(30),
+                Expires = DateTime.UtcNow.AddMinutes(int.TryParse(_configuration["Jwt:ExpireMinutes"], out var exp) ? exp : 60),
                 SigningCredentials = signingCredentials,
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"],

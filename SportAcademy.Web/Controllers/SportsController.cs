@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SportAcademy.Application.Commands.SportCommands.AddSkillLevel;
 using SportAcademy.Application.Commands.SportCommands.CreateSport;
 using SportAcademy.Application.Commands.SportCommands.DeleteSport;
 using SportAcademy.Application.Commands.SportCommands.UpdateSport;
@@ -34,17 +35,17 @@ namespace SportAcademy.Web.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(UpdateSportCommand command)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, UpdateSportCommand command, CancellationToken ct)
         {
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command, ct);
             return Ok(result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int sportId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken ct)
         {
-            var result = await _mediator.Send(new DeleteSportCommand(sportId));
+            var result = await _mediator.Send(new DeleteSportCommand(id), ct);
             return Ok(result);
         }
 
@@ -110,6 +111,14 @@ namespace SportAcademy.Web.Controllers
         )
         {
             var result = await _mediator.Send(new SearchSportsNameQuery(searchTerm), cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpPost("{sportId}/skill-level")]
+        public async Task<IActionResult> AddSkillLevel(int sportId, AddSkillLevelToSportCommand command, CancellationToken ct)
+        {
+            var cmd = command with { SportId = sportId };
+            var result = await _mediator.Send(cmd, ct);
             return Ok(result);
         }
     }

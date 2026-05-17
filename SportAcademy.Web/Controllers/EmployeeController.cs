@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportAcademy.Application.Commands.EmployeeCommands.CreateEmployee;
 using SportAcademy.Application.Commands.EmployeeCommands.DeleteEmployee;
+using SportAcademy.Application.Commands.EmployeeCommands.ToggleEmployeeStatus;
 using SportAcademy.Application.Commands.EmployeeCommands.UpdateEmployee;
 using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.Queries.EmployeeQueries.GetActiveCoaches;
@@ -55,10 +56,17 @@ namespace SportAcademy.Web.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> EditAsync(UpdateEmployeeCommand command, CancellationToken ct)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> EditAsync(int id, UpdateEmployeeCommand command, CancellationToken ct)
         {
             var result = await _mediator.Send(command, ct);
+            return Ok(result);
+        }
+
+        [HttpPatch("{id}/toggle-status")]
+        public async Task<IActionResult> ToggleStatus(int id, CancellationToken ct)
+        {
+            var result = await _mediator.Send(new ToggleEmployeeStatusCommand(id), ct);
             return Ok(result);
         }
 

@@ -14,13 +14,13 @@ namespace SportAcademy.Infrastructure.Persistence.Interceptors
     public class AuditingInterceptor : SaveChangesInterceptor
     {
         private readonly IUserContextService _contextService;
-        private readonly string _defaultUser;
 
         public AuditingInterceptor(IUserContextService contextService)
         {
             _contextService = contextService;
-            _defaultUser = _contextService.UserId ?? "Admin";
         }
+
+        private string CurrentUser => _contextService.UserId ?? "Admin";
 
         override public InterceptionResult<int> SavingChanges(
             DbContextEventData eventData,
@@ -56,12 +56,12 @@ namespace SportAcademy.Infrastructure.Persistence.Interceptors
                     if (entry.State == EntityState.Added)
                     {
                         auditableEntity.CreatedAt = currentTime;
-                        auditableEntity.CreatedBy = _defaultUser;
+                        auditableEntity.CreatedBy = CurrentUser;
                     }
                     else if (entry.State == EntityState.Modified)
                     {
                         auditableEntity.UpdatedAt = currentTime;
-                        auditableEntity.UpdatedBy = _defaultUser;
+                        auditableEntity.UpdatedBy = CurrentUser;
                     }
                 }
             }

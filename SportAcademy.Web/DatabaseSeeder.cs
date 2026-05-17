@@ -228,18 +228,7 @@ namespace SportAcademy.Infrastructure.Seeders
                     .Generate()
             ).ToList();
 
-            var faker = new Faker<Branch>()
-                    .RuleFor(b => b.City, f => f.PickRandom(KuwaitiAreas))
-                    .RuleFor(b => b.Name, (f, b) => $"{b.City} Sports Academy")
-                    .RuleFor(b => b.Country, _ => "Kuwait")
-                    .RuleFor(b => b.PhoneNumber, f => $"{f.Random.Number(5, 9)}{f.Random.Number(1000000, 9999999)}")
-                    .RuleFor(b => b.Email, (f, b) => 
-                        $"{b.Name.Replace(" ", "").Replace("-", "").ToLower()}{f.Random.Number(1, 999)}@sportacademy.com.kw")
-                    .RuleFor(b => b.CoX, f => f.Address.Latitude(29.0, 30.1).ToString())
-                    .RuleFor(b => b.CoY, f => f.Address.Longitude(47.5, 48.5).ToString())
-                    .RuleFor(b => b.IsActive, f => f.Random.Bool(0.9f));
 
-            return faker.Generate(8);
         }
 
         private static List<Sport> GenerateSports()
@@ -622,7 +611,7 @@ namespace SportAcademy.Infrastructure.Seeders
 
             for (int i = 0; i < 100; i++)
             {
-                var paymentNumber = $"PAY-{DateTime.UtcNow.Year}-{random.Next(10000, 99999)}";
+                var paymentNumber = $"PAY-{DateTime.UtcNow.Year}-{10000 + i:D5}";
 
                 payments.Add(new Payment
                 {

@@ -10,5 +10,7 @@ namespace SportAcademy.Application.Interfaces
         Task<PagedData<ListTraineeGroupDto>> GetAllOfSpecificDayAsync(PageRequest page, DateTime day, CancellationToken cancellationToken = default);
         Task<PagedData<TraineeGroupCardDto>> GetAllAsCardAsync(PageRequest page, CancellationToken cancellationToken = default);
         Task<TraineeGroupDetailDto?> GetDetailsByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<TraineeGroup?> GetByIdWithSchedulesAsync(int id, CancellationToken cancellationToken = default);
+        Task<PagedData<ListTraineeGroupDto>> SearchAsync(string term, PageRequest page, CancellationToken cancellationToken = default);
     }
 }

@@ -13,13 +13,13 @@ namespace SportAcademy.Infrastructure.Persistence.Interceptors
     public class SoftDeleteInterceptor : SaveChangesInterceptor
     {
         private readonly IUserContextService _contextService;
-        private readonly string _defaultUser;
 
         public SoftDeleteInterceptor(IUserContextService contextService)
         {
             _contextService = contextService;
-            _defaultUser = _contextService.UserId ?? "Admin";
         }
+
+        private string CurrentUser => _contextService.UserId ?? "Admin";
 
         public override InterceptionResult<int> SavingChanges(
             DbContextEventData eventData,
@@ -35,7 +35,7 @@ namespace SportAcademy.Infrastructure.Persistence.Interceptors
                     entry.State = EntityState.Modified;
                     entity.IsDeleted = true;
                     entity.DeletedAt = DateTime.UtcNow;
-                    entity.DeletedBy = _defaultUser;
+                    entity.DeletedBy = CurrentUser;
                 }
             }
 
@@ -57,7 +57,7 @@ namespace SportAcademy.Infrastructure.Persistence.Interceptors
                     entry.State = EntityState.Modified;
                     entity.IsDeleted = true;
                     entity.DeletedAt = DateTime.UtcNow;
-                    entity.DeletedBy = _defaultUser;
+                    entity.DeletedBy = CurrentUser;
                 }
             }
 

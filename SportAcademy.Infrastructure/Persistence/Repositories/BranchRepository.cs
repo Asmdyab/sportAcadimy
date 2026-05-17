@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.DTOs.BranchDtos;
 using SportAcademy.Application.Interfaces;
 using SportAcademy.Domain.Entities;
 using SportAcademy.Infrastructure.Persistence.DBContext;
+using SportAcademy.Infrastructure.Persistence.Extensions.QueryExtensions;
 
 namespace SportAcademy.Infrastructure.Persistence.Repositories
 {
@@ -51,5 +53,24 @@ namespace SportAcademy.Infrastructure.Persistence.Repositories
             => await _context.TraineeGroups
                 .Where(g => g.BranchId == branchId)
                 .SumAsync(g => g.MaximumCapacity, ct);
+
+        public async Task<PagedData<BranchCardDto>> SearchAsync(string term, PageRequest page, CancellationToken cancellationToken = default)
+            => await _context.Branchs
+                .Where(b => b.Name.Contains(term) || b.City.Contains(term) || b.Country.Contains(term))
+                .ProjectTo<BranchCardDto>(_mapper.ConfigurationProvider)
+                .ToPagedDataAsync(page, cancellationToken);
+
+        public async Task<BranchStatsDto> GetBranchStatsAsync(int branchId, CancellationToken cancellationToken = default)
+        {
+            var stats = new BranchStatsDto
+            {
+                TotalTrainees = await _context.Trainees.CountAsync(t => t.BranchId == branchId && !t.IsDeleted, cancellationToken),
+                TotalCoaches = await _context.Coachs.CountAsync(c => c.Employee.BranchId == branchId && !c.IsDeleted, cancellationToken),
+                ActiveGroups = await _context.TraineeGroups.CountAsync(g => g.BranchId == branchId, cancellationToken),
+                ActiveSessions = await _context.SessionOccurrences.CountAsync(s => s.GroupSchedule.TraineeGroup.BranchId == branchId, cancellationToken)
+            };
+
+            return stats;
+        }
     }
 }

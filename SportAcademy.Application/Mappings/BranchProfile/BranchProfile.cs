@@ -10,6 +10,7 @@ namespace SportAcademy.Application.Mappings.BranchProfile
         public BranchProfile()
         {
             CreateMap<Branch, BranchDropDownListDto>().ReverseMap();
+            CreateMap<Branch, BranchCardDto>().ReverseMap();
 
             CreateMap<Branch, CreateBranchCommand>().ReverseMap();
 

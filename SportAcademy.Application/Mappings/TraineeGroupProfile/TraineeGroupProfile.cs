@@ -83,10 +83,14 @@ public class TraineeGroupMappingProfile : AutoMapper.Profile
                 opt => opt.MapFrom(src => src.Coach.Employee.FirstName))
             .ForMember(dest => dest.BranchName,
                 opt => opt.MapFrom(src => src.Branch.Name))
-            .ForMember(dest => dest.StartTime,
+            .ForMember(dest => dest.Schedules,
                 opt => opt.MapFrom(src => src.GroupSchedules
-                                            .Select(gs => gs.StartTime)
-                                            .FirstOrDefault())
+                        .Select(gs => new GroupScheduleDto
+                        {
+                            DayOfWeek = gs.Day,
+                            StartTime = gs.StartTime
+                        }).ToList()
+                )
             );
     }
 }

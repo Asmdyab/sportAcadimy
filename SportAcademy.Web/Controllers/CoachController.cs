@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SportAcademy.Application.Commands.CoachCommands.CreateCoach;
 using SportAcademy.Application.Commands.CoachCommands.CreateCoachWithEmployee;
 using SportAcademy.Application.Commands.CoachCommands.DeleteCoach;
+using SportAcademy.Application.Commands.CoachCommands.UpdateCoach;
+using SportAcademy.Application.Queries.CoachQueries.GetCoachesDropdown;
 using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.Queries.CoachQueries.GetAverageRating;
 using SportAcademy.Application.Queries.CoachQueries.GetById;
@@ -45,6 +47,14 @@ namespace SportAcademy.Web.Controllers
             return Ok(result);
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, UpdateCoachCommand command, CancellationToken ct)
+        {
+            var cmd = command with { Id = id };
+            var result = await _mediator.Send(cmd, ct);
+            return Ok(result);
+        }
+
         [HttpDelete("{employeeId}")]
         public async Task<ActionResult> Delete(int employeeId, CancellationToken ct)
         {
@@ -75,6 +85,13 @@ namespace SportAcademy.Web.Controllers
         {
             var result = await _mediator.Send(new SearchCoachQuery(
                                         searchTerm, PageRequest.Create(page, pageSize)), ct);
+            return Ok(result);
+        }
+
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDropdown(CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetCoachesDropdownQuery(), ct);
             return Ok(result);
         }
     }

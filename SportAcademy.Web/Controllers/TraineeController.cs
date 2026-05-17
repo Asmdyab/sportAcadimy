@@ -14,6 +14,7 @@ using SportAcademy.Application.Queries.TraineeQueries.GetById;
 using SportAcademy.Application.Queries.TraineeQueries.GetTraineesCount;
 using SportAcademy.Application.Queries.TraineeQueries.GetTraineesCountOfSpecificDay;
 using SportAcademy.Application.Queries.TraineeQueries.SearchTrainee;
+using SportAcademy.Application.Queries.TraineeQueries.GetTraineesDropdown;
 using SportAcademy.Application.Queries.TraineeQueries.SearchTraineeById;
 using System.Threading.Tasks;
 
@@ -131,6 +132,13 @@ namespace SportAcademy.Web.Controllers
             var result = await _mediator.Send(new SearchTraineeByIdQuery(id.ToString(), pageRequest), 
                 cancellationToken);
 
+            return Ok(result);
+        }
+
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDropdown(CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetTraineesDropdownQuery(), ct);
             return Ok(result);
         }
     }

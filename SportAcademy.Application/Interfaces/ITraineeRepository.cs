@@ -9,7 +9,7 @@ namespace SportAcademy.Application.Interfaces
         Task UpdateSports(Trainee trainee, IEnumerable<int> sportIds);
         Task<List<int>> GetSportIdsByTraineeId(int id, CancellationToken cancellationToken = default);
         Task<bool> IsLinkedToSport(int sportId, CancellationToken cancellationToken = default);
-        Task<TraineeDetailsDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        new Task<TraineeDetailsDto> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<Trainee?> GetFullTrainee(int id, CancellationToken cancellationToken = default);
         Task<PagedData<TraineeOfSpecificDayDto>> GetAllTraineesOfSpecificDayAsync(DateTime date, PageRequest page, CancellationToken cancellationToken = default);
         Task<int> GetTraineesCountOfSpecificDayAsync(DateTime date, CancellationToken cancellationToken = default);
@@ -17,5 +17,6 @@ namespace SportAcademy.Application.Interfaces
         Task<int> GetActiveTraineesCount(CancellationToken cancellationToken = default);
         Task<PagedData<TraineeCardDto>> SearchAsync(string term, PageRequest page, CancellationToken ct = default);
         Task<PagedData<TraineeCardDto>> SearchByIdAsync(int id, PageRequest page, CancellationToken ct = default);
+        Task<List<TraineeDropdownDto>> GetDropdownAsync(CancellationToken cancellationToken = default);
     }
 }

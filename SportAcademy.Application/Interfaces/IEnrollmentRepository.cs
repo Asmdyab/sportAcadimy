@@ -26,5 +26,20 @@ namespace SportAcademy.Application.Interfaces
             DateTime? from,
             DateTime? to,
             CancellationToken ct = default);
+        Task<int> GetCountAsync(CancellationToken ct = default);
+        Task<int> GetActiveCountAsync(CancellationToken ct = default);
+        Task<int> GetPendingPaymentCountAsync(CancellationToken ct = default);
+        Task<Enrollment?> GetFirstByTraineeIdAsync(int traineeId, CancellationToken ct = default);
+        Task<PagedData<EnrollmentCardDto>> GetAllPaginatedAsync(
+            PageRequest page,
+            string? status,
+            string? paymentStatus,
+            CancellationToken ct = default);
+        Task<PagedData<EnrollmentCardDto>> SearchAsync(
+            string term,
+            PageRequest page,
+            string? status,
+            string? paymentStatus,
+            CancellationToken ct = default);
     }
 }

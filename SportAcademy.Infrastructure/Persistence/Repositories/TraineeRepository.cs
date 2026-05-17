@@ -319,6 +319,17 @@ namespace SportAcademy.Infrastructure.Persistence.Repositories
                 .Select(st => st.SportId)
                 .ToListAsync(cancellationToken);
 
+        public async Task<List<TraineeDropdownDto>> GetDropdownAsync(CancellationToken cancellationToken = default)
+            => await _context.Trainees
+                .Where(t => !t.IsDeleted)
+                .Select(t => new TraineeDropdownDto
+                {
+                    Id = t.Id,
+                    FirstName = t.FirstName,
+                    LastName = t.LastName
+                })
+                .ToListAsync(cancellationToken);
+
         public Task UpdateSports(Trainee trainee, IEnumerable<int> sportIds)
         {
             var current = trainee.Sports

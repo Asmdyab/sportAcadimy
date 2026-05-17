@@ -169,6 +169,21 @@ namespace SportAcademy.Infrastructure.Persistence.Repositories
                 tokens.Select(t => $"\"{t}*\""));
         }
 
+        public async Task<List<CoachDropdownDto>> GetDropdownListAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Coachs
+                .Where(c => !c.IsDeleted)
+                .Select(c => new CoachDropdownDto
+                {
+                    Id = c.EmployeeId,
+                    EmployeeFirstName = c.Employee.FirstName,
+                    EmployeeLastName = c.Employee.LastName,
+                    BranchId = c.Employee.BranchId,
+                    BranchName = c.Employee.Branch.Name
+                })
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<Coach?> GetByIdWithDetailsAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _context.Coachs

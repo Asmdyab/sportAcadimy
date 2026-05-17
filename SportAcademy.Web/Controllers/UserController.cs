@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SportAcademy.Application.Commands.Trainees.CreateTrainee;
+using SportAcademy.Application.Commands.UserCommands.ToggleUserActive;
 using SportAcademy.Application.Commands.UserCommands.UserCreate;
 using SportAcademy.Application.Commands.UserCommands.UserDelete;
 using SportAcademy.Application.Commands.UserCommands.UserUpdate;
 using SportAcademy.Application.Queries.TraineeQueries.GetAll;
 using SportAcademy.Application.Queries.UserQueries.GetAll;
 using SportAcademy.Application.Queries.UserQueries.GetById;
+using SportAcademy.Application.Queries.UserQueries.GetMyProfile;
 using SportAcademy.Application.Queries.UserQueries.GetUnlinkedUsers;
 
 namespace SportAcademy.Web.Controllers
@@ -67,6 +69,20 @@ namespace SportAcademy.Web.Controllers
                 return BadRequest(isDeleted?.Result.Message);
 
             return NoContent();
+        }
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMyProfile(CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetMyProfileQuery(), ct);
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/toggle-active")]
+        public async Task<IActionResult> ToggleActive(string id, CancellationToken ct)
+        {
+            var result = await _mediator.Send(new ToggleUserActiveCommand(id), ct);
+            return Ok(result);
         }
     }
 }

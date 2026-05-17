@@ -1,11 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SportAcademy.Application.Commands.AttendanceCommands.BulkCreateAttendance;
 using SportAcademy.Application.Commands.AttendanceCommands.CreateAttendance;
 using SportAcademy.Application.Commands.AttendanceCommands.DeleteAttendance;
 using SportAcademy.Application.Commands.AttendanceCommands.UpdateAttendance;
 using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAll;
+using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceBySession;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceRate;
 using SportAcademy.Application.Queries.AttendanceQueries.GetById;
 using SportAcademy.Application.Queries.AttendanceQueries.GetGlobalAttendanceRate;
@@ -59,7 +61,7 @@ namespace SportAcademy.Web.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id, CancellationToken ct)
         {
             var result = await _mediator.Send(new DeleteAttendanceCommand(id), ct);
@@ -85,6 +87,20 @@ namespace SportAcademy.Web.Controllers
             CancellationToken ct)
         {
             var result = await _mediator.Send(new GetGlobalAttendanceRateQuery(month), ct);
+            return Ok(result);
+        }
+
+        [HttpGet("session/{sessionOccurrenceId}")]
+        public async Task<IActionResult> GetBySession(int sessionOccurrenceId, CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetAttendanceBySessionQuery(sessionOccurrenceId), ct);
+            return Ok(result);
+        }
+
+        [HttpPost("bulk")]
+        public async Task<IActionResult> BulkCreate(BulkCreateAttendanceCommand command, CancellationToken ct)
+        {
+            var result = await _mediator.Send(command, ct);
             return Ok(result);
         }
     }

@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
+using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.Common.Result;
 using SportAcademy.Application.DTOs.SessionOccurrenceDtos;
 using SportAcademy.Application.Interfaces;
@@ -7,29 +7,20 @@ using SportAcademy.Domain.Enums;
 
 namespace SportAcademy.Application.Queries.SessionOccurrenceQueries.GetAll
 {
-    public class GetAllSessionOccurrencesQueryHandler : IRequestHandler<GetAllSessionOccurrencesQuery, Result<List<SessionOccurrenceDto>>>
+    public class GetAllSessionOccurrencesQueryHandler : IRequestHandler<GetAllSessionOccurrencesQuery, Result<PagedData<SessionOccurrenceCardDto>>>
     {
-        private readonly ISessionOccurrenceRepository _sessionOccurrenceRepository;
-        private readonly IMapper _mapper;
+        private readonly ISessionOccurrenceRepository _repository;
         private readonly string _operationType = OperationType.GetAll.ToString();
 
-        public GetAllSessionOccurrencesQueryHandler(
-            ISessionOccurrenceRepository sessionOccurrenceRepository,
-            IMapper mapper)
+        public GetAllSessionOccurrencesQueryHandler(ISessionOccurrenceRepository repository)
         {
-            _sessionOccurrenceRepository = sessionOccurrenceRepository;
-            _mapper = mapper;
+            _repository = repository;
         }
 
-        public async Task<Result<List<SessionOccurrenceDto>>> Handle(GetAllSessionOccurrencesQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PagedData<SessionOccurrenceCardDto>>> Handle(GetAllSessionOccurrencesQuery request, CancellationToken cancellationToken)
         {
-            var sessionOccurrences = await _sessionOccurrenceRepository.GetAllAsync(cancellationToken) 
-                ?? [];
-
-            var sessionOccurrencesDto = _mapper.Map<List<SessionOccurrenceDto>>(sessionOccurrences) 
-                ?? [];
-
-            return Result<List<SessionOccurrenceDto>>.Success(sessionOccurrencesDto, _operationType);
+            var result = await _repository.SearchAsync("", request.Page, cancellationToken);
+            return Result<PagedData<SessionOccurrenceCardDto>>.Success(result, _operationType);
         }
     }
 }

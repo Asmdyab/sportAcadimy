@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SportAcademy.Application.DTOs.SubscriptionDetailsDtos;
 using SportAcademy.Application.Interfaces;
 using SportAcademy.Domain.Entities;
 using SportAcademy.Infrastructure.Persistence.DBContext;
@@ -40,6 +41,16 @@ namespace SportAcademy.Infrastructure.Persistence.Repositories
         public async Task<List<SubscriptionDetails>?> GetActiveSubscriptionDetailsForTraineeAsync(int traineeId, CancellationToken cancellationToken = default)
             => await _context.SubscriptionDetails
                 .Where(sd => sd.TraineeId == traineeId && sd.IsActive)
+                .ToListAsync(cancellationToken);
+
+        public async Task<List<SubDetailsDropdownDto>> GetDropdownAsync(CancellationToken cancellationToken = default)
+            => await _context.SubscriptionDetails
+                .Where(s => !s.IsDeleted)
+                .Select(s => new SubDetailsDropdownDto
+                {
+                    Id = s.Id,
+                    Name = s.SportPrice.SportSubscriptionType.SubscriptionType.Name.ToString()
+                })
                 .ToListAsync(cancellationToken);
 
         private IQueryable<SubscriptionDetails> GetFullSubDetails()

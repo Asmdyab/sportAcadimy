@@ -2,19 +2,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SportAcademy.Application.Commands.AttendanceCommands.CreateAttendance;
-using SportAcademy.Application.Commands.AttendanceCommands.DeleteAttendance;
-using SportAcademy.Application.Commands.AttendanceCommands.UpdateAttendance;
 using SportAcademy.Application.Commands.TraineeGroupCommands.CreateTraineeGroup;
 using SportAcademy.Application.Commands.TraineeGroupCommands.DeleteTraineeGroup;
 using SportAcademy.Application.Commands.TraineeGroupCommands.UpdateTraineeGroup;
 using SportAcademy.Application.Common.Pagination;
-using SportAcademy.Application.Queries.AttendanceQueries.GetById;
-using SportAcademy.Application.Queries.BranchQueries.GetAll;
 using SportAcademy.Application.Queries.TraineeGroupQueries.GetAll;
 using SportAcademy.Application.Queries.TraineeGroupQueries.GetAllCount;
 using SportAcademy.Application.Queries.TraineeGroupQueries.GetAllOfSpecificDay;
 using SportAcademy.Application.Queries.TraineeGroupQueries.GetById;
+using SportAcademy.Application.Queries.TraineeGroupQueries.SearchTraineeGroup;
 
 namespace SportAcademy.Web.Controllers
 {
@@ -57,9 +53,8 @@ namespace SportAcademy.Web.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateTraineeGroupCommand command,
-            CancellationToken cancellationToken)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, UpdateTraineeGroupCommand command, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(result);
@@ -89,6 +84,18 @@ namespace SportAcademy.Web.Controllers
         public async Task<IActionResult> GetTraineeGroupsCount(CancellationToken ct)
         {
             var result = await _mediator.Send(new GetAllTraineeGroupsCountQuery(), ct);
+            return Ok(result);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(
+            [FromQuery] string searchTerm,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
+            CancellationToken ct)
+        {
+            var result = await _mediator.Send(
+                new SearchTraineeGroupQuery(searchTerm, PageRequest.Create(page, pageSize)), ct);
             return Ok(result);
         }
     }
