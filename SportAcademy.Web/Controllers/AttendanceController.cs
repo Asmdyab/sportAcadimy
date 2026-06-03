@@ -7,6 +7,7 @@ using SportAcademy.Application.Commands.AttendanceCommands.UpdateAttendance;
 using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAll;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceRate;
+using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceReport;
 using SportAcademy.Application.Queries.AttendanceQueries.GetById;
 using SportAcademy.Application.Queries.AttendanceQueries.GetGlobalAttendanceRate;
 using SportAcademy.Application.Queries.BranchQueries.GetAll;
@@ -85,6 +86,20 @@ namespace SportAcademy.Web.Controllers
             CancellationToken ct)
         {
             var result = await _mediator.Send(new GetGlobalAttendanceRateQuery(month), ct);
+            return Ok(result);
+        }
+
+
+        // GET api/attendance/report?page=1&pageSize=10
+        [AllowAnonymous]
+        [HttpGet("report")]
+        public async Task<IActionResult> GetAttendanceReport(
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
+            CancellationToken ct)
+        {
+            var result = await _mediator.Send(
+                new GetAttendanceReportQuery(page, pageSize), ct);
             return Ok(result);
         }
     }
