@@ -63,6 +63,8 @@ namespace SportAcademy.Infrastructure.Persistence.DBContext
         public DbSet<TraineeScheduleView> TraineeScheduleViews { get; set; }
         public DbSet<TraineeSubscriptionView> TraineeSubscriptionViews { get; set; }
 
+        public DbSet<TraineeAttendanceReportView> TraineeAttendanceReports => Set<TraineeAttendanceReportView>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
