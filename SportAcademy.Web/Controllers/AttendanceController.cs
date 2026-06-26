@@ -9,6 +9,7 @@ using SportAcademy.Application.Common.Pagination;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAll;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceBySession;
 using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceRate;
+using SportAcademy.Application.Queries.AttendanceQueries.GetAttendanceReport;
 using SportAcademy.Application.Queries.AttendanceQueries.GetById;
 using SportAcademy.Application.Queries.AttendanceQueries.GetGlobalAttendanceRate;
 using SportAcademy.Application.Queries.BranchQueries.GetAll;
@@ -90,17 +91,17 @@ namespace SportAcademy.Web.Controllers
             return Ok(result);
         }
 
-        [HttpGet("session/{sessionOccurrenceId}")]
-        public async Task<IActionResult> GetBySession(int sessionOccurrenceId, CancellationToken ct)
-        {
-            var result = await _mediator.Send(new GetAttendanceBySessionQuery(sessionOccurrenceId), ct);
-            return Ok(result);
-        }
 
-        [HttpPost("bulk")]
-        public async Task<IActionResult> BulkCreate(BulkCreateAttendanceCommand command, CancellationToken ct)
+        // GET api/attendance/report?page=1&pageSize=10
+        [AllowAnonymous]
+        [HttpGet("report")]
+        public async Task<IActionResult> GetAttendanceReport(
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
+            CancellationToken ct)
         {
-            var result = await _mediator.Send(command, ct);
+            var result = await _mediator.Send(
+                new GetAttendanceReportQuery(page, pageSize), ct);
             return Ok(result);
         }
     }
